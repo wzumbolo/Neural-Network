@@ -1,8 +1,15 @@
 import numpy as np
 import nnfs
 from nnfs.datasets import spiral_data
+from tensorflow import keras
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, Activation
+from kerastuner.tuners import RandomSearch
+import time
 
 nnfs.init()
+
+LOG_DIR = f"{int(time.time())}"
+
 
 class Layer_Dense:
     def __init__(self, n_inputs, n_neurons):
@@ -23,6 +30,26 @@ class Activation_Softmax:
         probabilities = exp_values / np.sum(exp_values, axis=1, keepdims=True)
         self.output = probabilities
 
+class Loss:
+    def calculate(self, output, y):
+        sample_losses = self.forward(output, y)
+        data_loss = np.mean(sample_losses)
+        return data_loss
+
+class Loss_CategoricalCrossentropy(Loss):
+    def forward(self, y_pred, y_true):
+        samples = len(y_pred)
+        y_pred_clipped = np.clip(y_pred, 1e-7, 1-1e-7)
+
+        if len(y_true.shape) == 1:
+            correct_confidences = y_pred_clipped[range(samples), y_true]
+
+        elif len(y_true.shape) == 2:
+            correct_confidences = np.sum(y_pred_clipped*y_true, axis=1)
+
+        negative_log_likelihoods = -np.log(correct_confidences)
+        return negative_log_likelihoods
+
 
 X, y = spiral_data(samples=100, classes=3)
 
@@ -30,12 +57,35 @@ dense1 = Layer_Dense(2, 3)
 activation1 = Activation_ReLu()
 
 dense2 = Layer_Dense(3, 3)
-activation2 = Activation_Softmax
+activation2 = Activation_Softmax()
 
 dense1.forward(X)
 activation1.forward(dense1.output)
 
 dense2.forward(activation1.output)
-# activation2.forward(dense2.output)
+activation2.forward(dense2.output)
 
 print(activation2.output[:5])
+
+loss_function = Loss_CategoricalCrossentropy()
+loss = loss_function.calculate(activation2.output, y)
+print('Loss: ', loss)
+
+tuner = RandomSearch(
+    Layer_Dense,
+    objective='val_accuracy',
+    max_trials=1,  # how many model variations to test?
+    executions_per_trial=1,  # how many trials per variation? (same model could perform differently)
+    directory=LOG_DIR
+    )
+
+tuner.search(x=X,
+             y=y,
+             #verbose=2, # just slapping this here bc jupyter notebook. The console out was getting messy.
+             epochs=1,
+             batch_size=64,
+             #callbacks=[tensorboard],  # if you have callbacks like tensorboard, they go here.
+             validation_data=(X, y))
+
+print(tuner.get_best_hyperparameters()[0].values)
+print(tuner.results_summary())
