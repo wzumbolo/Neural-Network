@@ -1,69 +1,49 @@
-import pandas as pd
-from tensorflow import keras
-from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, Activation
-from keras_tuner import RandomSearch
-import time
+import numpy
 import numpy as np
+import tensorflow as tf
+import keras
+import matplotlib as plt
+import pandas as pd
+from sklearn.feature_extraction.text import CountVectorizer
 
-LOG_DIR = f"{int(time.time())}"
-d = pd.read_csv('test.csv')
-D = pd.read_csv('train.csv')
-df = pd.DataFrame(data=d)
-df_train = pd.DataFrame(data=D)
+data_train = pd.read_csv('train.csv')
+data_test = pd.read_csv('train.csv')
+# print(data_test.shape)
+# print(data_train.shape)
+df1 = data_train.values.reshape(118260)
+DF1 = data_test.values.reshape(118260)
 
-x_test = d
-y_test = d
-x_train = D
-y_train = [df_train.iloc[:, -1:]]
-
-# img_rows, img_cols = 28, 28
-# x_train = x_train.values.reshape(x_train.shape[0], img_cols, img_rows, 1)
-# x_test = x_test.values.reshape(x_test.shape[0], img_cols, img_rows, 1)
-
-x_train = x_train.values.reshape(-1, 10, 11826, 1)
-print(x_train)
-x_test = x_test.values.reshape(-1, 11672, 10, 1)
-# x_test = np.asarray(x_test).astype('str')
-# x_train = np.asarray(x_train).astype('str')
-
-def build_model(hp):
-    model = keras.models.Sequential()
-
-    model.add(Conv2D(hp.Int('input_units', min_value=32, max_value=256, step=32), (3, 3), input_shape=x_train.shape[1:]))
-    model.add(Activation('relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-
-    for i in range(hp.Int('n_layers', 1, 4)):
-        model.add(Conv2D(hp.Int(f'conv_{i}_units', min_value=32, max_value=256, step=32), (3, 3)))
-        model.add(Activation('relu'))
-
-    model.add(Flatten())
-
-    model.add(Dense(10))
-    model.add(Activation("softmax"))
-
-    model.compile(optimizer="adam",
-                  loss="sparse_categorical_crossentropy",
-                  metrics=["accuracy"])
-
-    return model
+df1 = [str(item) for item in df1]
+DF1 = [str(item) for item in DF1]
 
 
-tuner = RandomSearch(
-    build_model,
-    objective='val_accuracy',
-    max_trials=1,  # how many model variations to test?
-    executions_per_trial=1,  # how many trials per variation? (same model could perform differently)
-    directory=LOG_DIR
-    )
+df, df_og = pd.factorize(df1)
+DF, DF_og = pd.factorize(DF1)
+print(df)
 
-tuner.search(x=x_train,
-             y=y_train,
-             # verbose=2,
-             epochs=1,
-             batch_size=64,
-             # callbacks=[tensorboard],  # if you have callbacks like tensorboard, they go here.
-             validation_data=(x_test, y_test))
 
-print(tuner.get_best_hyperparameters()[0].values)
-print(tuner.results_summary())
+df_tensor = tf.convert_to_tensor(df, np.int32)
+DF_tensor = tf.convert_to_tensor(DF, np.int32)
+
+
+train_x = df
+train_y = df
+test_x = DF
+test_y = DF
+
+
+
+model = keras.Sequential([
+    keras.layers.Flatten(input_shape=(1, 118260)),
+    keras.layers.Dense(128, activation='relu'),
+    keras.layers.Dense(10, activation='softmax')
+])
+
+model.compile(optimizer='adam',
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'],)
+
+model.fit(train_x, train_y, epochs=3)
+
+test_loss, test_acc = model.evaluate(test_x, test_y, verbose=1)
+print('Test accuracy: ', test_acc)
