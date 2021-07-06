@@ -107,15 +107,16 @@ col_test = list(test.columns)
 testing_set = test[col_test]
 print(testing_set)
 feature_cols_test = testing_set[FEATURES]
-labels_test = testing_set[LABEL].values
+# labels_test = testing_set[LABEL].values
 
 y = model.predict(np.array(feature_cols_test))
 predictions = list(itertools.islice(y, testing_set.shape[0]))
-
 predictions = prepro_y.inverse_transform(np.array(predictions).reshape(1459, 1))
+predictions = predictions.tolist()
+print(predictions)
 testing_set1 = np.array(testing_set, predictions, axis=1)
 print(testing_set1)
-reality = pd.DataFrame(prepro.inverse_transform(testing_set1), columns=[COLUMNS]).SalePrice
+reality = pd.DataFrame(prepro.inverse_transform(testing_set), columns=[COLUMNS]).SalePrice
 
 matplotlib.rc('xtick', labelsize=30)
 matplotlib.rc('ytick', labelsize=30)
