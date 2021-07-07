@@ -149,7 +149,7 @@ to_submit(y_predict, "submission_continuous")
 # ^ couldn't get this to work
 
 results = pd.DataFrame({'Predictions': [predictions]})
-results['ID'] = np.arange(len(results))
+results['ID'] = np.arange(ID[1460:])
 
 print(results.shape)
 # with open('submition.csv', mode='w') as submit:
