@@ -17,19 +17,117 @@ from keras.wrappers.scikit_learn import KerasRegressor
 import csv
 
 train = pd.read_csv('/Users/willzumbolo/PycharmProjects/machinelearning/train.csv')
-# print('Shape of the train data with all features:', train.shape)
-train = train.select_dtypes(exclude=['object'])
-# print("")
-# print('Shape of the train data with numerical features:', train.shape)
 train.drop('Id', axis=1, inplace=True)
+
+train['Utilities'].replace({'AllPub': 1, 'NoSewr': 2, 'NoSeWa': 3, 'ELO': 4}, inplace=True)
+train["Neighborhood"].replace({'Blmngtn': 1,
+                               'Blueste': 2,
+                               'BrDale': 3,
+                               'BrkSide': 4,
+                               'ClearCr': 5,
+                               'CollgCr': 6,
+                               'Crawfor': 7,
+                               'Edwards': 8,
+                               'Gilbert': 9,
+                               'IDOTRR': 10,
+                               'MeadowV': 11,
+                               'Mitchel': 12,
+                               'Names': 13,
+                               'NoRidge': 14,
+                               'NPkVill': 15,
+                               'NridgHt': 16,
+                               'NWAmes': 17,
+                               'OldTown': 18,
+                               'SWISU': 19,
+                               'Sawyer': 20,
+                               'SawyerW': 21,
+                               'Somerst': 22,
+                               'StoneBr': 23,
+                               'Timber': 24,
+                               'Veenker': 25}, inplace=True)
+train['BldgType'].replace({'1Fam': 1, '2FmCon': 2, 'Duplx': 3, 'TwnhsE': 4, 'TwnhsI': 5}, inplace=True)
+train['HouseStyle'].replace({'1Story': 1,
+                             '1.5Fin': 2,
+                             '1.5Unf': 3,
+                             '2Story': 4,
+                             '2.5Fin': 5,
+                             '2.5Unf': 6,
+                             'SFoyer': 7,
+                             'SLvl': 8}, inplace=True)
+train['CentralAir'].replace({'Y': 1, 'N': 2})
+train['GarageType'].replace({'2Types': 1, 'Attchd': 2, 'Basment': 3, 'BuiltIn': 4, 'CarPort': 5, 'Detchd': 6, 'NA': 7})
+train['SaleType'].replace({'WD': 1,
+                           'CWD': 2,
+                           'VWD': 3,
+                           'New': 4,
+                           'COD': 5,
+                           'Con': 6,
+                           'ConLw': 7,
+                           'ConLI': 8,
+                           'ConLD': 9,
+                           'Oth': 10})
+train['SaleCondition'].replace({'Normal': 1, 'Abnorml': 2, 'AdjLand': 3, 'Alloca': 4, 'Family': 5, 'Partial': 6})
+train['LotShape'].replace({'Reg': 1, 'IR1': 2, 'IR2': 3, 'IR3': 4})
+
+train = train.select_dtypes(exclude=['object'])
 train.fillna(0, inplace=True)
 
 test = pd.read_csv('/Users/willzumbolo/PycharmProjects/machinelearning/test.csv')
+test['Utilities'].replace({'AllPub': 1, 'NoSewr': 2, 'NoSeWa': 3, 'ELO': 4}, inplace=True)
+test["Neighborhood"].replace({'Blmngtn': 1,
+                              'Blueste': 2,
+                              'BrDale': 3,
+                              'BrkSide': 4,
+                              'ClearCr': 5,
+                              'CollgCr': 6,
+                              'Crawfor': 7,
+                              'Edwards': 8,
+                              'Gilbert': 9,
+                              'IDOTRR': 10,
+                              'MeadowV': 11,
+                              'Mitchel': 12,
+                              'nqmes': 13,
+                              'NoRidge': 14,
+                              'NPkVill': 15,
+                              'NridgHt': 16,
+                              'NWAmes': 17,
+                              'OldTown': 18,
+                              'SWISU': 19,
+                              'Sawyer': 20,
+                              'SawyerW': 21,
+                              'Somerst': 22,
+                              'StoneBr': 23,
+                              'Timber': 24,
+                              'Veenker': 25}, inplace=True)
+test['BldgType'].replace({'1Fam': 1, '2FmCon': 2, 'Duplx': 3, 'TwnhsE': 4, 'TwnhsI': 5}, inplace=True)
+test['HouseStyle'].replace({'1Story': 1,
+                             '1.5Fin': 2,
+                             '1.5Unf': 3,
+                             '2Story': 4,
+                             '2.5Fin': 5,
+                             '2.5Unf': 6,
+                             'SFoyer': 7,
+                             'SLvl': 8}, inplace=True)
+test['CentralAir'].replace({'Y': 1, 'N': 2})
+test['GarageType'].replace({'2Types': 1, 'Attchd': 2, 'Basment': 3, 'BuiltIn': 4, 'CarPort': 5, 'Detchd': 6, 'NA': 7})
+test['SaleType'].replace({'WD': 1,
+                           'CWD': 2,
+                           'VWD': 3,
+                           'New': 4,
+                           'COD': 5,
+                           'Con': 6,
+                           'ConLw': 7,
+                           'ConLI': 8,
+                           'ConLD': 9,
+                           'Oth': 10})
+test['SaleCondition'].replace({'Normal': 1, 'Abnorml': 2, 'AdjLand': 3, 'Alloca': 4, 'Family': 5, 'Partial': 6})
+test['LotShape'].replace({'Reg': 1, 'IR1': 2, 'IR2': 3, 'IR3': 4})
+
 test = test.select_dtypes(exclude=['object'])
 ID = test.Id
 test.fillna(0, inplace=True)
 test.drop('Id', axis=1, inplace=True)
-# print(test.shape)
+
 
 
 # clf = IsolationForest(max_samples=100, random_state=42)
@@ -38,8 +136,8 @@ test.drop('Id', axis=1, inplace=True)
 # y_noano = pd.DataFrame(y_noano, columns=['Top'])
 # y_noano[y_noano['Top'] == 1].index.values
 #
-# train = train.iloc[y_noano[y_noano['Top'] == 1].index.values]
-# train.reset_index(drop = True, inplace = True)
+# # train = train.iloc[y_noano[y_noano['Top'] == 1].index.values]
+# train.reset_index(drop=True, inplace=True)
 # print("Number of Outliers:", y_noano[y_noano['Top'] == -1].shape[0])
 # print("Number of rows without outliers:", train.shape[0])
 
@@ -64,7 +162,8 @@ prepro.fit(mat_train)
 
 prepro_test = MinMaxScaler()
 prepro_test.fit(mat_new)
-
+# print(len(col_train_bis))
+# print(mat_test.shape)
 train = pd.DataFrame(prepro.transform(mat_train), columns=col_train)
 test = pd.DataFrame(prepro_test.transform(mat_test), columns=col_train_bis)
 
@@ -91,10 +190,10 @@ np.random.seed(seed)
 
 # Model
 model = Sequential()
-model.add(Dense(200, input_dim=36, kernel_initializer='normal', activation='relu'))
+model.add(Dense(400, input_dim=38, kernel_initializer='normal', activation='relu'))
+model.add(Dense(200, kernel_initializer='normal', activation='relu'))
 model.add(Dense(100, kernel_initializer='normal', activation='relu'))
 model.add(Dense(50, kernel_initializer='normal', activation='relu'))
-model.add(Dense(25, kernel_initializer='normal', activation='relu'))
 model.add(Dense(1, kernel_initializer='normal'))
 # Compile model
 model.compile(loss='mean_squared_error', optimizer=keras.optimizers.adadelta_v2.Adadelta())
@@ -102,7 +201,7 @@ model.compile(loss='mean_squared_error', optimizer=keras.optimizers.adadelta_v2.
 feature_cols = training_set[FEATURES]
 labels = training_set[LABEL].values
 
-model.fit(np.array(feature_cols), np.array(labels), epochs=100, batch_size=10)
+model.fit(np.array(feature_cols), np.array(labels), epochs=400, batch_size=1)
 
 col_test = list(test.columns)
 testing_set = test[col_test]
@@ -138,21 +237,5 @@ def to_submit(pred_y, submit):
     y_predict = y_predict.join(ID)
     y_predict.to_csv(submit + '.csv', index=False)
 
+
 to_submit(y_predict, "submission_continuous")
-
-
-# predictions = np.concatenate(predictions)
-# print(predictions)
-# print(ID)
-# submit_array = np.append(predictions, ID, axis=1)
-# print(submit_array) 
-# ^ couldn't get this to work
-
-results = pd.DataFrame({'Predictions': [predictions]})
-results['ID'] = np.arange(ID[1460:])
-
-print(results.shape)
-# with open('submition.csv', mode='w') as submit:
-#     submit = csv.writer(submit, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-#
-#     submit.writerow([ID, predictions])
