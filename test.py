@@ -5,9 +5,9 @@ train = pd.read_csv('/Users/willzumbolo/PycharmProjects/machinelearning/train.cs
 
 
 def avg(col, elem):
-    elem = train.query('%(column)s == %(element)s' %{'column': col, 'element': elem})
+    search = train.query('%(column)s == %(element)s' %{'column': col, 'element': elem})
     price = []
-    price.append(elem['SalePrice'])
+    price.append(search['SalePrice'])
     price = np.asarray(price)
     numerator = price.sum(axis=1)
     df = pd.DataFrame(price)
