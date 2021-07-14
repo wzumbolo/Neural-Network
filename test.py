@@ -15,100 +15,63 @@ def avg(col, elem):
     avg = numerator // denominator
     return elem, avg
 
-neighborhood_list = []
-neighborhood_list.append(avg('Neighborhood', 'Blmngtn'))
-neighborhood_list.append(avg('Neighborhood', 'Blueste'))
-neighborhood_list.append(avg('Neighborhood', 'BrDale'))
-neighborhood_list.append(avg('Neighborhood', 'BrkSide'))
-neighborhood_list.append(avg('Neighborhood', 'ClearCr'))
-neighborhood_list.append(avg('Neighborhood', 'CollgCr'))
-neighborhood_list.append(avg('Neighborhood', 'Crawfor'))
-neighborhood_list.append(avg('Neighborhood', 'Edwards'))
-neighborhood_list.append(avg('Neighborhood', 'Gilbert'))
-neighborhood_list.append(avg('Neighborhood', 'IDOTRR'))
-neighborhood_list.append(avg('Neighborhood', 'MeadowV'))
-neighborhood_list.append(avg('Neighborhood', 'Mitchel'))
-neighborhood_list.append(avg('Neighborhood', 'NAmes'))
-neighborhood_list.append(avg('Neighborhood', 'NoRidge'))
-neighborhood_list.append(avg('Neighborhood', 'NPkVill'))
-neighborhood_list.append(avg('Neighborhood', 'NridgHt'))
-neighborhood_list.append(avg('Neighborhood', 'NWAmes'))
-neighborhood_list.append(avg('Neighborhood', 'OldTown'))
-neighborhood_list.append(avg('Neighborhood', 'SWISU'))
-neighborhood_list.append(avg('Neighborhood', 'Sawyer'))
-neighborhood_list.append(avg('Neighborhood', 'SawyerW'))
-neighborhood_list.append(avg('Neighborhood', 'Somerst'))
-neighborhood_list.append(avg('Neighborhood', 'StoneBr'))
-neighborhood_list.append(avg('Neighborhood', 'Timber'))
-neighborhood_list.append(avg('Neighborhood', 'Veenker'))
 
-rank = (np.asarray(neighborhood_list, dtype=object))
+def percent(arr):
+    x, y = arr.T
+    col = y
+    largest = np.amax(col, axis=0)
+    per = [n / largest for n in col]
+    x = x.reshape(len(per), 1)
+    np.reshape(per, (len(per), 1))
+    per = np.asarray(per)
+    print(per.shape)
+    ans = np.concatenate((x, per), axis=1)
+    return ans
+
+neighborhood_list = []
+neighborhoods = train.Neighborhood.unique()
+[neighborhood_list.append(avg('Neighborhood', neighborhood_name)) for neighborhood_name in neighborhoods]
+neighborhood_list = np.asarray(neighborhood_list, dtype=object)
+print(percent(neighborhood_list))
 
 BldgType_list = []
-BldgType_list.append(avg('BldgType', '1Fam'))
-BldgType_list.append(avg('BldgType', '2fmCon'))
-BldgType_list.append(avg('BldgType', 'Duplex'))
-BldgType_list.append(avg('BldgType', 'TwnhsE'))
-BldgType_list.append(avg('BldgType', 'Twnhs'))
-
-BldgType = np.asarray(BldgType_list, dtype=object)
+BldgType = train.BldgType.unique()
+[BldgType_list.append(avg('BldgType', BldgType_name)) for BldgType_name in BldgType]
+BldgType_list = np.asarray(BldgType_list, dtype=object)
+print(percent(BldgType_list))
 
 HouseStyle_list = []
-HouseStyle_list.append(avg('HouseStyle', '1Story'))
-HouseStyle_list.append(avg('HouseStyle', '1.5Fin'))
-HouseStyle_list.append(avg('HouseStyle', '1.5Unf'))
-HouseStyle_list.append(avg('HouseStyle', '2Story'))
-HouseStyle_list.append(avg('HouseStyle', '2.5Fin'))
-HouseStyle_list.append(avg('HouseStyle', '2.5Unf'))
-HouseStyle_list.append(avg('HouseStyle', 'SFoyer'))
-HouseStyle_list.append(avg('HouseStyle', 'SLvl'))
-
-HouseStyle = np.asarray(HouseStyle_list, dtype=object)
+HouseStyle = train.HouseStyle.unique()
+[HouseStyle_list.append(avg('HouseStyle', HouseStyle_name)) for HouseStyle_name in HouseStyle]
+HouseStyle_list = np.asarray(HouseStyle_list, dtype=object)
+print(percent(HouseStyle_list))
 
 CentralAir_list = []
-CentralAir_list.append(avg('CentralAir', 'Y'))
-CentralAir_list.append(avg('CentralAir', 'N'))
-
-CentralAir = np.asarray(CentralAir_list, dtype=object)
+CentralAir = train.CentralAir.unique()
+[CentralAir_list.append(avg('CentralAir', CentralAir_name)) for CentralAir_name in CentralAir]
+CentralAir_list = np.asarray(CentralAir_list, dtype=object)
+print(percent(CentralAir_list))
 
 GarageType_list = []
-GarageType_list.append(avg('GarageType', '2Types'))
-GarageType_list.append(avg('GarageType', 'Attchd'))
-GarageType_list.append(avg('GarageType', 'Basment'))
-GarageType_list.append(avg('GarageType', 'BuiltIn'))
-GarageType_list.append(avg('GarageType', 'CarPort'))
-GarageType_list.append(avg('GarageType', 'Detchd'))
-
-GarageType = np.asarray(GarageType_list, dtype=object)
+GarageType = train.GarageType.unique()
+[GarageType_list.append(avg('GarageType', GarageType_name)) for GarageType_name in GarageType]
+GarageType_list = np.asarray(GarageType_list, dtype=object)
+print(percent(GarageType_list)
 
 SaleType_list = []
-SaleType_list.append(avg('SaleType', 'WD'))
-SaleType_list.append(avg('SaleType', 'CWD'))
-SaleType_list.append(avg('SaleType', 'VWD'))
-SaleType_list.append(avg('SaleType', 'New'))
-SaleType_list.append(avg('SaleType', 'COD'))
-SaleType_list.append(avg('SaleType', 'Con'))
-SaleType_list.append(avg('SaleType', 'ConLw'))
-SaleType_list.append(avg('SaleType', 'ConLI'))
-SaleType_list.append(avg('SaleType', 'ConLD'))
-SaleType_list.append(avg('SaleType', 'Oth'))
-
-SaleType = np.asarray(SaleType_list, dtype=object)
+SaleType = train.SaleType.unique()
+[SaleType_list.append(avg('SaleType', SaleType_name)) for SaleType_name in SaleType]
+SaleType_list = np.asarray(SaleType_list, dtype=object)
+print(percent(SaleType_list))
 
 SaleCondition_list = []
-SaleCondition_list.append(avg('SaleCondition', 'Normal'))
-SaleCondition_list.append(avg('SaleCondition', 'Abnorml'))
-SaleCondition_list.append(avg('SaleCondition', 'AdjLand'))
-SaleCondition_list.append(avg('SaleCondition', 'Alloca'))
-SaleCondition_list.append(avg('SaleCondition', 'Family'))
-SaleCondition_list.append(avg('SaleCondition', 'Partial'))
-
-SaleCondition = np.asarray(SaleCondition_list, dtype=object)
+SaleCondition = train.SaleCondition.unique()
+[SaleCondition_list.append(avg('SaleCondition', SaleCondition_name)) for SaleCondition_name in SaleCondition]
+SaleCondition_list = np.asarray(SaleCondition_list, dtype=object)
+print(percent(SaleCondition_list))
 
 LotShape_list = []
-LotShape_list.append(avg('LotShape', 'Reg'))
-LotShape_list.append(avg('LotShape', 'IR1'))
-LotShape_list.append(avg('LotShape', 'IR2'))
-LotShape_list.append(avg('LotShape', 'IR3'))
-
-LotShape = np.asarray(LotShape_list, dtype=object)
+LotShape = train.LotShape.unique()
+[LotShape_list.append(avg('LotShape', LotShape_name)) for LotShape_name in LotShape]
+LotShape_list = np.asarray(LotShape_list, dtype=object)
+print(percent(LotShape_list))
