@@ -19,200 +19,142 @@ import statistics
 import seaborn as sns
 from scipy import stats
 from scipy.stats import norm, skew
+from sklearn.preprocessing import LabelEncoder
 
 train = pd.read_csv('/Users/willzumbolo/PycharmProjects/machinelearning/train.csv')
 train.drop('Id', axis=1, inplace=True)
 
-test = pd.read_csv('/Users/willzumbolo/PycharmProjects/machinelearning/test.csv')
-test['Utilities'].replace({'AllPub': 1, 'NoSewr': 2, 'NoSeWa': 3, 'ELO': 4}, inplace=True)
 
-# Unskews the data
-
-train["SalePrice"] = np.log1p(train["SalePrice"])
-
-
-sns.distplot(train['SalePrice'], fit=norm);
-
-
-(mu, sigma) = stats.norm.fit(train['SalePrice'])
-print( '\n mu = {:.2f} and sigma = {:.2f}\n'.format(mu, sigma))
-
-
-plt.legend(['Normal dist. ($\mu=$ {:.2f} and $\sigma=$ {:.2f} )'.format(mu, sigma)],
-            loc='best')
-plt.ylabel('Frequency')
-plt.title('SalePrice distribution')
-
-
-fig = plt.figure()
-res = stats.probplot(train['SalePrice'], plot=plt)
-plt.show()
-
-# Converting strings to ints
-
-train['Utilities'].replace({'AllPub': 1, 'NoSewr': 2, 'NoSeWa': 3, 'ELO': 4}, inplace=True)
-train["Neighborhood"].replace({'Blmngtn': 1,
-                               'Blueste': 2,
-                               'BrDale': 3,
-                               'BrkSide': 4,
-                               'ClearCr': 5,
-                               'CollgCr': 6,
-                               'Crawfor': 7,
-                               'Edwards': 8,
-                               'Gilbert': 9,
-                               'IDOTRR': 10,
-                               'MeadowV': 11,
-                               'Mitchel': 12,
-                               'Names': 13,
-                               'NoRidge': 14,
-                               'NPkVill': 15,
-                               'NridgHt': 16,
-                               'NWAmes': 17,
-                               'OldTown': 18,
-                               'SWISU': 19,
-                               'Sawyer': 20,
-                               'SawyerW': 21,
-                               'Somerst': 22,
-                               'StoneBr': 23,
-                               'Timber': 24,
-                               'Veenker': 25}, inplace=True)
-train['BldgType'].replace({'1Fam': 1, '2FmCon': 2, 'Duplx': 3, 'TwnhsE': 4, 'TwnhsI': 5}, inplace=True)
-train['HouseStyle'].replace({'1Story': 1,
-                             '1.5Fin': 2,
-                             '1.5Unf': 3,
-                             '2Story': 4,
-                             '2.5Fin': 5,
-                             '2.5Unf': 6,
-                             'SFoyer': 7,
-                             'SLvl': 8}, inplace=True)
-train['CentralAir'].replace({'Y': 1, 'N': 2}, inplace=True)
-train['GarageType'].replace({'2Types': 1,
-                             'Attchd': 2,
-                             'Basment': 3,
-                             'BuiltIn': 4,
-                             'CarPort': 5,
-                             'Detchd': 6,
-                             'NA': 7}, inplace=True)
-train['SaleType'].replace({'WD': 1,
-                           'CWD': 2,
-                           'VWD': 3,
-                           'New': 4,
-                           'COD': 5,
-                           'Con': 6,
-                           'ConLw': 7,
-                           'ConLI': 8,
-                           'ConLD': 9,
-                           'Oth': 10}, inplace=True)
-train['SaleCondition'].replace({'Normal': 1,
-                                'Abnorml': 2,
-                                'AdjLand': 3,
-                                'Alloca': 4,
-                                'Family': 5,
-                                'Partial': 6}, inplace=True)
-train['LotShape'].replace({'Reg': 1, 'IR1': 2, 'IR2': 3, 'IR3': 4}, inplace=True)
+train['Utilities'].replace({'AllPub': 100, 'NoSeWa': 76}, inplace=True)
+train["Neighborhood"].replace({'Blmngtn': 58,
+                               'Blueste': 41,
+                               'BrDale': 31,
+                               'BrkSide': 37,
+                               'ClearCr': 63,
+                               'CollgCr': 59,
+                               'Crawfor': 63,
+                               'Edwards':38,
+                               'Gilbert': 58,
+                               'IDOTRR': 30,
+                               'MeadowV': 29,
+                               'Mitchel': 47,
+                               'NAmes': 43,
+                               'NoRidge': 100,
+                               'NPkVill': 43,
+                               'NridgHt': 94,
+                               'NWAmes': 56,
+                               'OldTown': 38,
+                               'SWISU': 43,
+                               'Sawyer': 41,
+                               'SawyerW': 56,
+                               'Somerst': 67,
+                               'StoneBr': 93,
+                               'Timber': 72,
+                               'Veenker': 71}, inplace=True)
+train['BldgType'].replace({'1Fam': 100, '2fmCon': 69, 'Duplex': 72, 'TwnhsE': 98, 'Twnhs': 73}, inplace=True)
+train['HouseStyle'].replace({'1Story': 80,
+                             '1.5Fin': 65,
+                             '1.5Unf': 50,
+                             '2Story': 95,
+                             '2.5Fin': 100,
+                             '2.5Unf': 72,
+                             'SFoyer': 61,
+                             'SLvl': 76}, inplace=True)
+train['CentralAir'].replace({'Y': 100, 'N': 57}, inplace=True)
+train['GarageType'].replace({'2Types': 59,
+                             'Attchd': 80,
+                             'Basment': 63,
+                             'BuiltIn': 100,
+                             'CarPort': 43,
+                             'Detchd': 53,
+                             'NA': 41}, inplace=True)        # This shouldn't be zero, bug in test.py
+train['SaleType'].replace({'WD': 63,
+                           'CWD': 77,
+                           'VWD': 0,
+                           'New': 100,
+                           'COD': 52,
+                           'Con': 98,
+                           'ConLw': 52,
+                           'ConLI': 73,
+                           'ConLD': 50,
+                           'Oth': 44}, inplace=True)
+train['SaleCondition'].replace({'Normal': 64,
+                                'Abnorml': 54,
+                                'AdjLand': 38,
+                                'Alloca': 61,
+                                'Family': 55,
+                                'Partial': 100}, inplace=True)
+train['LotShape'].replace({'Reg': 69, 'IR1': 86, 'IR2': 100, 'IR3': 90}, inplace=True)
 
 train = train.select_dtypes(exclude=['object'])
 train.fillna(0, inplace=True)
 
 test = pd.read_csv('/Users/willzumbolo/PycharmProjects/machinelearning/test.csv')
-test['Utilities'].replace({'AllPub': 1, 'NoSewr': 2, 'NoSeWa': 3, 'ELO': 4}, inplace=True)
-test["Neighborhood"].replace({'Blmngtn': 1,
-                              'Blueste': 2,
-                              'BrDale': 3,
-                              'BrkSide': 4,
-                              'ClearCr': 5,
-                              'CollgCr': 6,
-                              'Crawfor': 7,
-                              'Edwards': 8,
-                              'Gilbert': 9,
-                              'IDOTRR': 10,
-                              'MeadowV': 11,
-                              'Mitchel': 12,
-                              'nqmes': 13,
-                              'NoRidge': 14,
-                              'NPkVill': 15,
-                              'NridgHt': 16,
-                              'NWAmes': 17,
-                              'OldTown': 18,
-                              'SWISU': 19,
-                              'Sawyer': 20,
-                              'SawyerW': 21,
-                              'Somerst': 22,
-                              'StoneBr': 23,
-                              'Timber': 24,
-                              'Veenker': 25}, inplace=True)
-test['BldgType'].replace({'1Fam': 1, '2FmCon': 2, 'Duplx': 3, 'TwnhsE': 4, 'TwnhsI': 5}, inplace=True)
-test['HouseStyle'].replace({'1Story': 1,
-                             '1.5Fin': 2,
-                             '1.5Unf': 3,
-                             '2Story': 4,
-                             '2.5Fin': 5,
-                             '2.5Unf': 6,
-                             'SFoyer': 7,
-                             'SLvl': 8}, inplace=True)
-test['CentralAir'].replace({'Y': 1, 'N': 2}, inplace=True)
-test['GarageType'].replace({'2Types': 1,
-                            'Attchd': 2,
-                            'Basment': 3,
-                            'BuiltIn': 4,
-                            'CarPort': 5,
-                            'Detchd': 6,
-                            'NA': 7}, inplace=True)
-test['SaleType'].replace({'WD': 1,
-                           'CWD': 2,
-                           'VWD': 3,
-                           'New': 4,
-                           'COD': 5,
-                           'Con': 6,
-                           'ConLw': 7,
-                           'ConLI': 8,
-                           'ConLD': 9,
-                           'Oth': 10}, inplace=True)
-test['SaleCondition'].replace({'Normal': 1, 'Abnorml': 2,
-                               'AdjLand': 3, 'Alloca': 4,
-                               'Family': 5, 'Partial': 6}, inplace=True)
-test['LotShape'].replace({'Reg': 1, 'IR1': 2, 'IR2': 3, 'IR3': 4}, inplace=True)
+test['Utilities'].replace({'AllPub': 100, 'NoSeWa': 76}, inplace=True)
+test["Neighborhood"].replace({'Blmngtn': 58,
+                               'Blueste': 41,
+                               'BrDale': 31,
+                               'BrkSide': 37,
+                               'ClearCr': 63,
+                               'CollgCr': 59,
+                               'Crawfor': 63,
+                               'Edwards':38,
+                               'Gilbert': 58,
+                               'IDOTRR': 30,
+                               'MeadowV': 29,
+                               'Mitchel': 47,
+                               'NAmes': 43,
+                               'NoRidge': 100,
+                               'NPkVill': 43,
+                               'NridgHt': 94,
+                               'NWAmes': 56,
+                               'OldTown': 38,
+                               'SWISU': 43,
+                               'Sawyer': 41,
+                               'SawyerW': 56,
+                               'Somerst': 67,
+                               'StoneBr': 93,
+                               'Timber': 72,
+                               'Veenker': 71}, inplace=True)
+test['BldgType'].replace({'1Fam': 100, '2fmCon': 69, 'Duplex': 72, 'TwnhsE': 98, 'Twnhs': 73}, inplace=True)
+test['HouseStyle'].replace({'1Story': 80,
+                             '1.5Fin': 65,
+                             '1.5Unf': 50,
+                             '2Story': 95,
+                             '2.5Fin': 100,
+                             '2.5Unf': 72,
+                             'SFoyer': 61,
+                             'SLvl': 76}, inplace=True)
+test['CentralAir'].replace({'Y': 100, 'N': 57}, inplace=True)
+test['GarageType'].replace({'2Types': 59,
+                             'Attchd': 80,
+                             'Basment': 63,
+                             'BuiltIn': 100,
+                             'CarPort': 43,
+                             'Detchd': 53,
+                             'NA': 41}, inplace=True)
+test['SaleType'].replace({'WD': 63,
+                           'CWD': 77,
+                           'VWD': 0,
+                           'New': 100,
+                           'COD': 52,
+                           'Con': 98,
+                           'ConLw': 52,
+                           'ConLI': 73,
+                           'ConLD': 50,
+                           'Oth': 44}, inplace=True)
+test['SaleCondition'].replace({'Normal': 64,
+                                'Abnorml': 54,
+                                'AdjLand': 38,
+                                'Alloca': 61,
+                                'Family': 55,
+                                'Partial': 100}, inplace=True)
+test['LotShape'].replace({'Reg': 69, 'IR1': 86, 'IR2': 100, 'IR3': 90}, inplace=True)
 
-test = test.select_dtypes(exclude=['object'])
 ID = test.Id
-test.fillna(0, inplace=True)
+test = test.select_dtypes(exclude=['object'])
 test.drop('Id', axis=1, inplace=True)
 
-ntrain = train.shape[0]
-ntest = test.shape[0]
-y_train = train.SalePrice.values
-all_data = pd.concat((train, test)).reset_index(drop=True)
-all_data.drop(['SalePrice'], axis=1, inplace=True)
-print("all_data size is : {}".format(all_data.shape))
-
-# something to figure out if numbers above are right
-all_data['MSSubClass'] = all_data['MSSubClass'].apply(str)
-
-
-#Changing OverallCond into a categorical variable
-all_data['OverallCond'] = all_data['OverallCond'].astype(str)
-
-
-#Year and month sold are transformed into categorical features.
-all_data['YrSold'] = all_data['YrSold'].astype(str)
-all_data['MoSold'] = all_data['MoSold'].astype(str)
-
-from sklearn.preprocessing import LabelEncoder
-cols = ('FireplaceQu', 'BsmtQual', 'BsmtCond', 'GarageQual', 'GarageCond',
-        'ExterQual', 'ExterCond','HeatingQC', 'PoolQC', 'KitchenQual', 'BsmtFinType1',
-        'BsmtFinType2', 'Functional', 'Fence', 'BsmtExposure', 'GarageFinish', 'LandSlope',
-        'LotShape', 'PavedDrive', 'Street', 'Alley', 'CentralAir', 'MSSubClass', 'OverallCond',
-        'YrSold', 'MoSold')
-# process columns, apply LabelEncoder to categorical features
-for c in cols:
-    lbl = LabelEncoder()
-    lbl.fit(list(all_data[c].values))
-    all_data[c] = lbl.transform(list(all_data[c].values))
-
-# shape
-print('Shape all_data: {}'.format(all_data.shape))
-
-# Arranging Data
 warnings.filterwarnings('ignore')
 
 col_train = list(train.columns)
@@ -236,6 +178,7 @@ prepro_test = MinMaxScaler()
 prepro_test.fit(mat_new)
 # print(len(col_train_bis))
 # print(mat_test.shape)
+
 train = pd.DataFrame(prepro.transform(mat_train), columns=col_train)
 test = pd.DataFrame(prepro_test.transform(mat_test), columns=col_train_bis)
 
@@ -260,9 +203,9 @@ training_sub = training_set[col_train]
 seed = 7
 np.random.seed(seed)
 
-# Neural Model
+# Neural
 model = Sequential()
-model.add(Dense(1600, input_dim=43, kernel_initializer='normal', activation='relu'))
+model.add(Dense(1600, input_dim=45, kernel_initializer='normal', activation='relu'))
 model.add(Dense(800, kernel_initializer='normal', activation='relu'))
 model.add(Dense(400, kernel_initializer='normal', activation='relu'))
 model.add(Dense(200, kernel_initializer='normal', activation='relu'))
@@ -276,7 +219,7 @@ model.compile(loss='mean_squared_error', optimizer=keras.optimizers.adadelta_v2.
 feature_cols = training_set[FEATURES]
 labels = training_set[LABEL].values
 
-model.fit(np.array(feature_cols), np.array(labels), epochs=3200, batch_size=1)
+model.fit(np.array(feature_cols), np.array(labels), epochs=1, batch_size=1)
 
 # Predictions
 col_test = list(test.columns)
@@ -284,26 +227,25 @@ testing_set = test[col_test]
 # print(testing_set)
 feature_cols_test = testing_set[FEATURES]
 # labels_test = testing_set[LABEL].values
-
-y = model.predict(np.array(
-feature_cols_test))
+y = model.predict(np.array(feature_cols_test))
 predictions = list(itertools.islice(y, testing_set.shape[0]))
 predictions = prepro_y.inverse_transform(np.array(predictions).reshape(1459, 1))
+
 # reality = pd.DataFrame(prepro.inverse_transform(testing_set), columns=[COLUMNS]).SalePrice
 
 # graphing doesn't work because 'test' has no 'SalePrice'
-matplotlib.rc('xtick', labelsize=30)
-matplotlib.rc('ytick', labelsize=30)
-
-fig, ax = plt.subplots(figsize=(50, 40))
-
-plt.style.use('ggplot')
-plt.plot(predictions, reality, 'ro')
-plt.xlabel('Predictions', fontsize=30)
-plt.ylabel('Reality', fontsize=30)
-plt.title('Predictions x Reality on dataset Test', fontsize=30)
-ax.plot([reality.min(), reality.max()], [reality.min(), reality.max()], 'k--', lw=4)
-plt.show()
+# matplotlib.rc('xtick', labelsize=30)
+# matplotlib.rc('ytick', labelsize=30)
+#
+# fig, ax = plt.subplots(figsize=(50, 40))
+#
+# plt.style.use('ggplot')
+# plt.plot(predictions, reality, 'ro')
+# plt.xlabel('Predictions', fontsize=30)
+# plt.ylabel('Reality', fontsize=30)
+# plt.title('Predictions x Reality on dataset Test', fontsize=30)
+# ax.plot([reality.min(), reality.max()], [reality.min(), reality.max()], 'k--', lw=4)
+# plt.show()
 
 # Submitting
 y_predict = model.predict(np.array(test))
