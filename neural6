@@ -1,30 +1,32 @@
-import os
+# import os
 import keras
 import itertools
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-from pylab import rcParams
-import matplotlib
+# import numpy as np
+# import matplotlib.pyplot as plt
+# from pylab import rcParams
+# import matplotlib
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.ensemble import IsolationForest
+# from sklearn.ensemble import IsolationForest
 import warnings
 import numpy as np
 from keras.models import Sequential
 from keras.layers import Dense
-from keras.wrappers.scikit_learn import KerasRegressor
-import csv
-import statistics
-import seaborn as sns
-from scipy import stats
-from scipy.stats import norm, skew
-from sklearn.preprocessing import LabelEncoder
+# from keras.wrappers.scikit_learn import KerasRegressor
+# import csv
+# import statistics
+# import seaborn as sns
+# from scipy import stats
+# from scipy.stats import norm, skew
+# from sklearn.preprocessing import LabelEncoder
 
 train = pd.read_csv('/Users/willzumbolo/PycharmProjects/machinelearning/train.csv')
 train.drop('Id', axis=1, inplace=True)
 
+train.fillna(0)
 
+print(train)
 train['Utilities'].replace({'AllPub': 100, 'NoSeWa': 76}, inplace=True)
 train["Neighborhood"].replace({'Blmngtn': 58,
                                'Blueste': 41,
@@ -33,7 +35,7 @@ train["Neighborhood"].replace({'Blmngtn': 58,
                                'ClearCr': 63,
                                'CollgCr': 59,
                                'Crawfor': 63,
-                               'Edwards':38,
+                               'Edwards': 38,
                                'Gilbert': 58,
                                'IDOTRR': 30,
                                'MeadowV': 29,
@@ -90,32 +92,33 @@ train = train.select_dtypes(exclude=['object'])
 train.fillna(0, inplace=True)
 
 test = pd.read_csv('/Users/willzumbolo/PycharmProjects/machinelearning/test.csv')
+test.fillna(0)
 test['Utilities'].replace({'AllPub': 100, 'NoSeWa': 76}, inplace=True)
 test["Neighborhood"].replace({'Blmngtn': 58,
-                               'Blueste': 41,
-                               'BrDale': 31,
-                               'BrkSide': 37,
-                               'ClearCr': 63,
-                               'CollgCr': 59,
-                               'Crawfor': 63,
-                               'Edwards':38,
-                               'Gilbert': 58,
-                               'IDOTRR': 30,
-                               'MeadowV': 29,
-                               'Mitchel': 47,
-                               'NAmes': 43,
-                               'NoRidge': 100,
-                               'NPkVill': 43,
-                               'NridgHt': 94,
-                               'NWAmes': 56,
-                               'OldTown': 38,
-                               'SWISU': 43,
-                               'Sawyer': 41,
-                               'SawyerW': 56,
-                               'Somerst': 67,
-                               'StoneBr': 93,
-                               'Timber': 72,
-                               'Veenker': 71}, inplace=True)
+                              'Blueste': 41,
+                              'BrDale': 31,
+                              'BrkSide': 37,
+                              'ClearCr': 63,
+                              'CollgCr': 59,
+                              'Crawfor': 63,
+                              'Edwards':38,
+                              'Gilbert': 58,
+                              'IDOTRR': 30,
+                              'MeadowV': 29,
+                              'Mitchel': 47,
+                              'NAmes': 43,
+                              'NoRidge': 100,
+                              'NPkVill': 43,
+                              'NridgHt': 94,
+                              'NWAmes': 56,
+                              'OldTown': 38,
+                              'SWISU': 43,
+                              'Sawyer': 41,
+                              'SawyerW': 56,
+                              'Somerst': 67,
+                              'StoneBr': 93,
+                              'Timber': 72,
+                              'Veenker': 71}, inplace=True)
 test['BldgType'].replace({'1Fam': 100, '2fmCon': 69, 'Duplex': 72, 'TwnhsE': 98, 'Twnhs': 73}, inplace=True)
 test['HouseStyle'].replace({'1Story': 80,
                              '1.5Fin': 65,
